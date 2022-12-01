@@ -1,4 +1,5 @@
 import "./SearchBox.css";
+import {services} from "./services.js";
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 
 export const TEXT_submit_button_accessible_name = "submit button";
@@ -17,9 +18,9 @@ function SearchWord({input}: {input: string;}){
   useEffect(() => {
 
     switch(inputs[0]) {
-      case "dictionary": setWordData(getAllWords())// setWordData(await getAllWords());
+      case "dictionary": setWordData(GetAllWords())
         break;
-      default: setWordData(getOneWord({input}))// setWordData(await getOneWord({input}));
+      default: setWordData(GetOneWord({input}))
         break;
     }
   }, [input])
@@ -28,16 +29,20 @@ function SearchWord({input}: {input: string;}){
   return currentWordData;
 }
 
-async function getAllWords() {
+async function GetAllWords() {
   console.log("get all words 1")
   // const [currentWordData, setWordData] = useState({});
 
   console.log("get all words 2")
-  await fetch("https://us-central1-pathology-to-power.cloudfunctions.net/allWords", { mode: 'no-cors'})
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("DATA: ", data)
-    })
+  const response = await fetch("https://us-central1-pathology-to-power.cloudfunctions.net/allWords", { mode: 'no-cors'})
+  const jsonResponse = await response.json()
+  console.log(jsonResponse)
+  return jsonResponse
+  
+   // .then((response) => response.json())
+    //.then((data) => {
+      //console.log("DATA: ", data)
+    //})
     // .then((r) => {
     //   console.log("RESPONSE:", r);
     //   console.log("body:", r.body);
@@ -48,7 +53,7 @@ async function getAllWords() {
   // return currentWordData;
 }
 
-async function getOneWord({input}: {input: string;}) {
+async function GetOneWord({input}: {input: string;}) {
   const [currentWordData, setWordData] = useState({});
 
   await fetch("https://us-central1-pathology-to-power.cloudfunctions.net/oneWord?word="+input, { mode: 'no-cors'})
@@ -70,11 +75,12 @@ function AllWords() {
           <th className="stigma" aria-label="Word Stigma"> Word Stigma: </th>
           <th className="substitutions" aria-label="Word Substitutions"> Word Substitutions: </th>
         </tr>
+        
       </table>
   );
 }
 
-function oneWord({result}: {result: string}) {
+function OneWord({result}: {result: {}}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
   return (
@@ -98,14 +104,14 @@ function oneWord({result}: {result: string}) {
 }
 
 function WordLog({input}: {input: string;}) {
-  const result: string = SearchWord({input});
+  const result: {} = SearchWord({input});
 
   switch(input) {
     case "dictionary":
       return AllWords();
       break;
     default:
-      return oneWord({result});
+      return OneWord({result});
       break;
   }
 }
