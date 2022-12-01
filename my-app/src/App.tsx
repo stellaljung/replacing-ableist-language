@@ -1,24 +1,17 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import SearchBox from './SearchBox';
 
 function App() {
+  document.title = 'Replacing Ableist Language'
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header className="App" aria-label="Website Information">
+        <h1 className="App-header" aria-label="Website Title">Replacing Ableist Language</h1>
+        <h1 className="App-description" aria-label="Website Description">Welcome to our dictionary for disability justice! Type “dictionary” into the command box to see all the words, their meanings and substitutions in our dictionary. Type any word into the command box to see its meaning, context in the field of disability studies, how it contributes to disability stigma, and some of our substitutions.Contact stella_ljung@brown.edu with any word submissions of your own!</h1>
       </header>
+      <SearchBox />
     </div>
   );
 }
