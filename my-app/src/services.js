@@ -24,17 +24,18 @@ async function getAllWords() {
   }
 }
 
+// returns null if not found
 async function getOneWord(word) {
   try {
     const response = await axios.get(`${API_ROOT}/oneWord?word=` + word);
     const wordData = response.data
-    return {
+    return wordData ? {
             word: wordData.word,
             meaning: wordData.meaning,
             context: wordData.context,
             stigma: wordData.stigma,
             substitutions: wordData.substitutions,
-          }
+          } : null;
   } catch (error) {
     console.log("error", error);
     return null;
