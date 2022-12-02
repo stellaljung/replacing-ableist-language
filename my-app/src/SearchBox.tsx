@@ -11,6 +11,14 @@ export const TEXT_command_output = "command output";
 export const TEXT_app = "app";
 export const TEXT_command_handler = "command handler";
 
+async function fetchAllWords() {
+  await services.getAllWords();
+}
+
+async function fetchOneWord({input}: {input: string;}) {
+  await services.getOneWord(input);
+}
+
 function SearchWord({input}: {input: string;}){
   const [currentWordData, setWordData] = useState({});
   const inputs: string[] = input.split(" ");
@@ -18,54 +26,27 @@ function SearchWord({input}: {input: string;}){
   useEffect(() => {
 
     switch(inputs[0]) {
-      case "dictionary": setWordData(GetAllWords())
+      case "dictionary": 
+        try{
+          setWordData(fetchAllWords())
+        } catch(error){
+          setWordData("Data Error")
+        }
         break;
-      default: setWordData(GetOneWord({input}))
+      default:
+        try{
+          setWordData(fetchOneWord({input}))
+        } catch(error){
+          setWordData("Word Error")
+        }
         break;
     }
   }, [input])
 
-
   return currentWordData;
 }
 
-async function GetAllWords() {
-  console.log("get all words 1")
-  // const [currentWordData, setWordData] = useState({});
-
-  console.log("get all words 2")
-  const response = await fetch("https://us-central1-pathology-to-power.cloudfunctions.net/allWords", { mode: 'no-cors'})
-  const jsonResponse = await response.json()
-  console.log(jsonResponse)
-  return jsonResponse
-  
-   // .then((response) => response.json())
-    //.then((data) => {
-      //console.log("DATA: ", data)
-    //})
-    // .then((r) => {
-    //   console.log("RESPONSE:", r);
-    //   console.log("body:", r.body);
-    //   console.log("body:", r.json);
-    //   // setWordData(r)
-    // })
-
-  // return currentWordData;
-}
-
-async function GetOneWord({input}: {input: string;}) {
-  const [currentWordData, setWordData] = useState({});
-
-  await fetch("https://us-central1-pathology-to-power.cloudfunctions.net/oneWord?word="+input, { mode: 'no-cors'})
-  .then((r) => {
-    console.log("RESPOND:", r);
-    setWordData(r)
-  })
-
-  return currentWordData;
-}
-
-function AllWords() {
+function AllWords({result}: {result: {}}) {
   return (
       <table>
         <tr>
@@ -75,15 +56,19 @@ function AllWords() {
           <th className="stigma" aria-label="Word Stigma"> Word Stigma: </th>
           <th className="substitutions" aria-label="Word Substitutions"> Word Substitutions: </th>
         </tr>
-        
       </table>
   );
 }
 
-function OneWord({result}: {result: {}}) {
+function OneWord({result}: {result: {}}, {input}: {input: string}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
-  return (
+  console.log(result)
+  if(result == null){
+    return WordNotFound({input})
+  }
+  else {
+    return (
       <table>
         <tr>
           <th className="table-header" aria-label="Searched Word"> Word: </th>
@@ -93,25 +78,37 @@ function OneWord({result}: {result: {}}) {
           <th className="table-header" aria-label="Word Substitutions"> Word Substitutions: </th>
         </tr>
         <tr>
-          <td className="table-column">{"result.word"}</td>
+          <td className="table-column">{JSON.stringify(result)}</td>
           <td className="table-column">{"result.meaning"}</td>
           <td className="table-column">{"result.context"}</td>
           <td className="table-column">{"result.stigma"}</td>
           <td className="table-column">{"result.substitutions"}</td>
         </tr>
       </table>
-  );
+    );
+  }
+}
+
+function WordNotFound({input}: {input: string;}){
+  return(
+    <div>
+      <br></br>
+      Your search <b>{input}</b> does not match any entries in our dictionary.
+      <br></br>
+    </div>
+  )
 }
 
 function WordLog({input}: {input: string;}) {
   const result: {} = SearchWord({input});
-
   switch(input) {
+    case "":
+      return WordNotFound({input});
     case "dictionary":
-      return AllWords();
+      return AllWords({result});
       break;
     default:
-      return OneWord({result});
+      return OneWord({result}, {input});
       break;
   }
 }

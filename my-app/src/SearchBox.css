@@ -15,31 +15,31 @@ table {
   }
   
   .search-bar{
-    background-color: #d2c2cf;
-    min-height: 30vh;
+    background-color: #e1cec8;
+    min-height: 15vh;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2vh;
-    font-family: "Arial";
+    font-family: "Tahoma";
     color: #3d3824;
     text-size-adjust: auto;
   }
   
   .search-box{
+    background-color: white;
     border: black;
     border: 1px solid;
-    padding: 0 2vh 2vh 2vh;
     color: #3d3824;
-    margin-bottom: 2vh;
+    font-family: "Tahoma"
   }
   
   .search-button{
-    background: white;
+    background: lightgrey;
     border: black;
     border: 2px solid;
     border-spacing: 3px;
-    font-family: "Arial";
+    font-family: "Tahoma";
   }
   
   .history-log{
