@@ -7,35 +7,38 @@ export const services = {
   getOneWord
 }
 
-function getAllWords() {
-  axios.get(`${API_ROOT}/allWords`)
-    .then((dictionary) => {
-      return dictionary.data.map((word) => ({
-        word: word.word,
-        meaning: word.meaning,
-        context: word.context,
-        stigma: word.stigma,
-        substitutions: word.substitutions,
-      }))
-    }).catch((error) => {
-      console.log("getAllWords ERROR: ", error);
-      return error
-    })
+async function getAllWords() {
+  try {
+    const response = await axios.get(`${API_ROOT}/allWords`);
+    const dictionary = response.data
+    return dictionary.map((word) => ({
+            word: word.word,
+            meaning: word.meaning,
+            context: word.context,
+            stigma: word.stigma,
+            substitutions: word.substitutions,
+          }))
+  } catch (error) {
+    console.log("error", error);
+    return null;
+  }
 }
 
-function getOneWord(word) {
-  axios.get(`${API_ROOT}/oneWord?word=` + word)
-    .then((word) => {
-      const wordData = word.data
-      return {
-        word: wordData.word,
-        meaning: wordData.meaning,
-        context: wordData.context,
-        stigma: wordData.stigma,
-        substitutions: wordData.substitutions,
-      }
-    }).catch((error) => {
-      console.log("getOneWord ERROR", error);
-      return error
-    })
+// returns null if not found
+async function getOneWord(word) {
+  try {
+    const response = await axios.get(`${API_ROOT}/oneWord?word=` + word);
+    const wordData = response.data
+    return wordData ? {
+            word: wordData.word,
+            meaning: wordData.meaning,
+            context: wordData.context,
+            stigma: wordData.stigma,
+            substitutions: wordData.substitutions,
+          } : null;
+  } catch (error) {
+    console.log("error", error);
+    return null;
+  }
+  
 }

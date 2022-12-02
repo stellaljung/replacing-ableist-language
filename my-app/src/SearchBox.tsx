@@ -2,26 +2,40 @@ import "./SearchBox.css";
 import {services} from "./services.js";
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { isEmptyBindingElement } from "typescript";
-
-async function fetchAllWords() {
-  await services.getAllWords();
-}
-
-async function fetchOneWord({input}: {input: string;}) {
-  await services.getOneWord(input);
-}
+import axios from "axios";
 
 function SearchWord({input}: {input: string;}){
   const [currentWordData, setWordData] = useState({});
   const inputs: string[] = input.split(" ");
 
+  async function fetchAllWords() {
+    const response = await services.getAllWords();
+    for (let i = 0; i < response.length; i++) {
+      console.log(response[i]);
+    }
+    if (response === null) {
+      setWordData({})
+    } else {
+      setWordData(response);
+    }
+  }
+  
+  async function fetchOneWord({input}: {input: string;}) {
+    const response = await services.getOneWord(input);
+    console.log(response)
+    if (response === null) {
+      setWordData({})
+    } else {
+      setWordData(response);
+    }
+  }
+  
   useEffect(() => {
 
     switch(inputs[0]) {
-      case "dictionary": setWordData(fetchAllWords())
+      case "dictionary": fetchAllWords()
         break;
-      default: setWordData(fetchOneWord({input}))
-      
+      default: fetchOneWord({input})
         break;
     }
   }, [input])
@@ -37,7 +51,7 @@ function AllWords({result}: {result: {}}) {
     htmlString += OneWordInDictionary({result})
   }
   
-  return (htmlString)
+  return (<div>{htmlString}</div>)
 }
 
 function Header(){
@@ -58,7 +72,6 @@ function Header(){
 function OneWordInDictionary({result}: {result: {}}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
-  console.log(result)
   return (
     <table>
       <tr>
@@ -75,7 +88,6 @@ function OneWordInDictionary({result}: {result: {}}) {
 function OneWord({result}: {result: {}}, {input}: {input: string}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
-  console.log(result)
   if(result == null || result == "{}"){
     return WordNotFound({input})
   }
