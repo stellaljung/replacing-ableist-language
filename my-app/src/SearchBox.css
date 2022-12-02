@@ -27,30 +27,25 @@ table {
   }
   
   .search-box{
-    background-color: white;
     border: black;
     border: 1px solid;
     color: #3d3824;
-    font-family: "Tahoma"
+    font-family: "Tahoma";
+    margin-right: 5px;
+    padding: 5px;
+    background-color: white;
   }
   
   .search-button{
     background: lightgrey;
     border: black;
-    border: 2px solid;
+    border: 1px solid;
+    border-radius: 8px;
     border-spacing: 3px;
     font-family: "Tahoma";
+    padding: 5px;
   }
-  
-  .history-log{
-    padding: 0 4vh 4vh 4vh;
-    text-align: left;
-  }
-  .command-box{
-    background: aqua;
-    border: 1px solid #999;
-    padding: 4px
-  }
-  .submit-button{
-    margin-top: 1vh;
+
+  input:placeholder-shown{
+    font-style: italic;
   }

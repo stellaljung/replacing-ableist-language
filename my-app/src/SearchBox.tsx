@@ -1,15 +1,7 @@
 import "./SearchBox.css";
 import {services} from "./services.js";
 import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
-
-export const TEXT_submit_button_accessible_name = "submit button";
-export const TEXT_command_box = "input box";
-export const TEXT_submit_button_text = "submit";
-export const TEXT_command_history_text = "command history";
-export const TEXT_command_input = "command input";
-export const TEXT_command_output = "command output";
-export const TEXT_app = "app";
-export const TEXT_command_handler = "command handler";
+import { isEmptyBindingElement } from "typescript";
 
 async function fetchAllWords() {
   await services.getAllWords();
@@ -26,19 +18,10 @@ function SearchWord({input}: {input: string;}){
   useEffect(() => {
 
     switch(inputs[0]) {
-      case "dictionary": 
-        try{
-          setWordData(fetchAllWords())
-        } catch(error){
-          setWordData("Data Error")
-        }
+      case "dictionary": setWordData(fetchAllWords())
         break;
-      default:
-        try{
-          setWordData(fetchOneWord({input}))
-        } catch(error){
-          setWordData("Word Error")
-        }
+      default: setWordData(fetchOneWord({input}))
+      
         break;
     }
   }, [input])
@@ -47,16 +30,45 @@ function SearchWord({input}: {input: string;}){
 }
 
 function AllWords({result}: {result: {}}) {
+  let htmlString = "";
+  
+  htmlString+= Header()
+  for(let i=0; i<3;i++){
+    htmlString += OneWordInDictionary({result})
+  }
+  
+  return (htmlString)
+}
+
+function Header(){
+  return(
+    <table>
+      <tr>
+        <th className="table-header" aria-label="Searched Word Header"> Word: </th>
+        <th className="table-header" aria-label="Word Meaning Header"> Meaning: </th>
+        <th className="table-header" aria-label="Disability Context Header"> Context: </th>
+        <th className="table-header" aria-label="Word Stigma Header"> Word Stigma: </th>
+        <th className="table-header" aria-label="Word Substitutions Header"> Word Substitutions: </th>
+      </tr>
+    </table>
+  )
+  
+}
+
+function OneWordInDictionary({result}: {result: {}}) {
+  //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
+  //change result fields from strings to actual field
+  console.log(result)
   return (
-      <table>
-        <tr>
-          <th className="searched-word" aria-label="Searched Word"> Word: </th>
-          <th className="meaning" aria-label="Word Meaning"> Meaning: </th>
-          <th className="context" aria-label="Disability Context"> Context: </th>
-          <th className="stigma" aria-label="Word Stigma"> Word Stigma: </th>
-          <th className="substitutions" aria-label="Word Substitutions"> Word Substitutions: </th>
-        </tr>
-      </table>
+    <table>
+      <tr>
+        <td className="table-column" aria-label="Searched Word">{JSON.stringify(result)}</td>
+        <td className="table-column" aria-label="Word Meaning">{"result.meaning"}</td>
+        <td className="table-column" aria-label="Disability Context">{"result.context"}</td>
+        <td className="table-column" aria-label="Word Stigma">{"result.stigma"}</td>
+        <td className="table-column" aria-label="Word Substitutions">{"result.substitutions"}</td>
+      </tr>
+    </table>
   );
 }
 
@@ -64,25 +76,25 @@ function OneWord({result}: {result: {}}, {input}: {input: string}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
   console.log(result)
-  if(result == null){
+  if(result == null || result == "{}"){
     return WordNotFound({input})
   }
   else {
     return (
       <table>
         <tr>
-          <th className="table-header" aria-label="Searched Word"> Word: </th>
-          <th className="table-header" aria-label="Word Meaning"> Meaning: </th>
-          <th className="table-header" aria-label="Disability Context"> Context: </th>
-          <th className="table-header" aria-label="Word Stigma"> Word Stigma: </th>
-          <th className="table-header" aria-label="Word Substitutions"> Word Substitutions: </th>
+          <th className="table-header" aria-label="Searched Word Header"> Word: </th>
+          <th className="table-header" aria-label="Word Meaning Header"> Meaning: </th>
+          <th className="table-header" aria-label="Disability Context Header"> Context: </th>
+          <th className="table-header" aria-label="Word Stigma Header"> Word Stigma: </th>
+          <th className="table-header" aria-label="Word Substitutions Header"> Word Substitutions: </th>
         </tr>
         <tr>
-          <td className="table-column">{JSON.stringify(result)}</td>
-          <td className="table-column">{"result.meaning"}</td>
-          <td className="table-column">{"result.context"}</td>
-          <td className="table-column">{"result.stigma"}</td>
-          <td className="table-column">{"result.substitutions"}</td>
+          <td className="table-column" aria-label="Searched Word">{JSON.stringify(result)}</td>
+          <td className="table-column" aria-label="Word Meaning">{"result.meaning"}</td>
+          <td className="table-column" aria-label="Disability Context">{"result.context"}</td>
+          <td className="table-column" aria-label="Word Stigma">{"result.stigma"}</td>
+          <td className="table-column" aria-label="Word Substitutions">{"result.substitutions"}</td>
         </tr>
       </table>
     );
@@ -126,6 +138,7 @@ interface ControlledInputProps {
 function ControlledInput({ value, setValue, ariaLabel }: ControlledInputProps) {
   return (
       <input
+          placeholder="Enter Word Here"
           value={value}
           onChange={(ev) => setValue(ev.target.value)}
           aria-label={ariaLabel}
@@ -143,49 +156,50 @@ function SearchBar({addInput}: CommandLineProps) {
 
   return (
       <div className="search-bar" aria-label="Search Bar">
-        <div className ="search-box" aria-label="Enter word in the search bar here">
+        <div className ="search-box" aria-label="Enter Word Here">
         <fieldset>
-         <legend>Enter word here:</legend>
-          <ControlledInput value={value} setValue={setValue} ariaLabel={TEXT_command_box}/>
+          <ControlledInput value={value} setValue={setValue} ariaLabel={"Search Box"}/>
         </fieldset>
         </div>
         <br></br>
         <div>
           <button
               className="search-button"
-              aria-label={TEXT_submit_button_accessible_name}
+              aria-label="Submit Button"
               onClick={() => {
                 addInput(value);
                 console.log(`input: ${value}`);
               }}
           >
-            <b>Search</b>
+            search
           </button>
         </div>
       </div>
   );
 }
 
-  export default function SearchBox() {
-    const [inputs, setInputs] = useState<string[]>([]);
 
-    return (
-        <div className="App" aria-label={TEXT_app}>
-          <SearchBar
-              addInput={(input: string) => {
-                const newInputs = inputs.slice();
-                newInputs.push(input);
-                setInputs(newInputs);
-              }}
-          />
-          <div className={"history-log"} aria-label={TEXT_command_history_text}>
-            {inputs.map((input, index) => (
-                <WordLog
-                    input={input}
-                    key={index}
-                />
-            ))}
-          </div>
+export default function SearchBox() {
+  const [inputs, setInputs] = useState<string[]>([]);
+
+  return (
+      <div className="App" aria-label="App">
+        <SearchBar
+            addInput={(input: string) => {
+              const newInputs = inputs.slice();
+              newInputs.push(input);
+              setInputs(newInputs);
+            }}
+        />
+        <div className={"history-log"} aria-label={"Word Search History"}>
+          {inputs.map((input, index) => (
+              <WordLog
+                  input={input}
+                  key={index}
+              />
+          ))}
         </div>
-    );
+      </div>
+  );
   }
+  
