@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/replacing-ableist-language/static/css/main.360f6d0f.css",
+    "main.js": "/replacing-ableist-language/static/js/main.f1fd7215.js",
+    "static/js/787.28cb0dcd.chunk.js": "/replacing-ableist-language/static/js/787.28cb0dcd.chunk.js",
+    "index.html": "/replacing-ableist-language/index.html",
+    "main.360f6d0f.css.map": "/replacing-ableist-language/static/css/main.360f6d0f.css.map",
+    "main.f1fd7215.js.map": "/replacing-ableist-language/static/js/main.f1fd7215.js.map",
+    "787.28cb0dcd.chunk.js.map": "/replacing-ableist-language/static/js/787.28cb0dcd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.360f6d0f.css",
+    "static/js/main.f1fd7215.js"
+  ]
+}
