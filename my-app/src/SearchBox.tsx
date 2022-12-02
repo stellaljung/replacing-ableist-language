@@ -10,9 +10,6 @@ function SearchWord({input}: {input: string}){
 
   async function fetchAllWords() {
     const response = await services.getAllWords();
-    for (let i = 0; i < response.length; i++) {
-      console.log(response[i]);
-    }
     if (response === null) {
       setWordData({})
     } else {
@@ -43,45 +40,43 @@ function SearchWord({input}: {input: string}){
   return currentWordData;
 }
 
-function AllWords({result}: {result: {}}) {
-  return (<div>running dictionary</div>)
-}
+function AllWords({result}: {result: any}) {
+  console.log(result)
+  const arr = []; 
 
-function Header(){
-  return(
-    <table>
-      <tr>
-        <th className="table-header" aria-label="Words in Dictionary"> Word: </th>
-      </tr>
-    </table>
-  )
-  
-}
+  for(var i=0; i<result.length; i++){
+    arr.push(result[i].word)
+  }
 
-function OneWordInDictionary({result}: {result: {}}) {
-  //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
-  //change result fields from strings to actual field
+  arr.sort()
+
+  const dict = arr.map((data)=> <li>{data}</li>)
   return (
-    <table>
-      <tr>
-        <td className="table-column" aria-label="Searched Word">{JSON.stringify(result)}</td>
-        <td className="table-column" aria-label="Word Meaning">{"result.meaning"}</td>
-        <td className="table-column" aria-label="Disability Context">{"result.context"}</td>
-        <td className="table-column" aria-label="Word Stigma">{"result.stigma"}</td>
-        <td className="table-column" aria-label="Word Substitutions">{"result.substitutions"}</td>
-      </tr>
-    </table>
-  );
+    
+    <div className = "our-dictionary" aria-label="all dictionary words">
+      <br></br>
+      <table>
+        <tr>
+            <td className="table-column" aria-label="Searched Word" style ={{listStyleType:'square', textAlign: 'left'}}>
+          {dict}
+        </td>
+        </tr>
+      </table>
+      <br></br>
+    </div>
+  )
 }
 
-function OneWord({result}: {result: {}}, {input}: {input: string}) {
+function OneWord({result}: {result: any}, {input}: {input: string}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
-  if(result == null || result == '{}' || result == undefined){
+  if(!result.hasOwnProperty("word")){
     return WordNotFound({input})
   }
   else {
     return (
+      <div>
+        <br></br>
       <table>
         <tr>
           <th className="table-header" aria-label="Searched Word Header"> Word: </th>
@@ -98,15 +93,21 @@ function OneWord({result}: {result: {}}, {input}: {input: string}) {
           <td className="table-column" aria-label="Word Substitutions">{result.substitutions}</td>
         </tr>
       </table>
+      <br></br>
+      </div>
     );
   }
 }
 
 function WordNotFound({input}: {input: string;}){
   return(
-    <div>
+    <div className="bad-word">
       <br></br>
-      Your search <b>{input}</b> does not match any entries in our dictionary.
+      <table>
+        <tr>
+            <td className="table-column" aria-label="Searched Word">Your search <b>{input}</b> does not match any entries in our dictionary.</td>
+        </tr>
+      </table>
       <br></br>
     </div>
   )
@@ -140,8 +141,9 @@ interface ControlledInputProps {
  */
 function ControlledInput({ value, setValue, ariaLabel }: ControlledInputProps) {
   return (
-      <input
+      <input 
           placeholder="Enter Word Here"
+          style={{background: 'white', fontFamily: 'Tahoma'}}
           value={value}
           onChange={(ev) => setValue(ev.target.value)}
           aria-label={ariaLabel}
@@ -152,14 +154,6 @@ function ControlledInput({ value, setValue, ariaLabel }: ControlledInputProps) {
 /* props for handling the user input */
 interface CommandLineProps {
   addInput: (input: string) => any;
-}
-
-type WordResult = {
-  word: string,
-  meaning: string,
-  context: string,
-  stigma: string,
-  substitutions: string
 }
 
 function SearchBar({addInput}: CommandLineProps) {
@@ -180,6 +174,7 @@ function SearchBar({addInput}: CommandLineProps) {
               onClick={() => {
                 addInput(value);
                 console.log(`input: ${value}`);
+                setValue('')
               }}
           >
             search
@@ -193,6 +188,9 @@ function SearchBar({addInput}: CommandLineProps) {
 export default function SearchBox() {
   const [inputs, setInputs] = useState<string[]>([]);
 
+  const copInputs = inputs.slice();
+  const revInputs = copInputs.reverse();
+
   return (
       <div className="App" aria-label="App">
         <SearchBar
@@ -203,7 +201,7 @@ export default function SearchBox() {
             }}
         />
         <div className={"history-log"} aria-label={"Word Search History"}>
-          {inputs.map((input, index) => (
+          {revInputs.map((input, index) => (
               <WordLog
                   input={input}
                   key={index}

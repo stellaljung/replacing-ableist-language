@@ -15,7 +15,7 @@ table {
   }
   
   .search-bar{
-    background-color: #e1cec8;
+    background-color: #d2c2cf;
     min-height: 15vh;
     display: flex;
     align-items: center;
@@ -27,25 +27,32 @@ table {
   }
   
   .search-box{
-    border: black;
+    border: #3d3824;
     border: 1px solid;
     color: #3d3824;
     font-family: "Tahoma";
     margin-right: 5px;
     padding: 5px;
-    background-color: white;
+    background: white;
   }
   
   .search-button{
-    background: lightgrey;
-    border: black;
+    background: white;
+    border: #3d3824;
     border: 1px solid;
     border-radius: 8px;
     border-spacing: 3px;
     font-family: "Tahoma";
+    color: #3d3824;
     padding: 5px;
+  }
+
+  table{
+    width: 100%;
+    table-layout: fixed;
   }
 
   input:placeholder-shown{
     font-style: italic;
   }
+
