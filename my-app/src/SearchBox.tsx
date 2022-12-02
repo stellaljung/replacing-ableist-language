@@ -4,7 +4,7 @@ import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { isEmptyBindingElement } from "typescript";
 import axios from "axios";
 
-function SearchWord({input}: {input: string;}){
+function SearchWord({input}: {input: string}){
   const [currentWordData, setWordData] = useState({});
   const inputs: string[] = input.split(" ");
 
@@ -20,8 +20,8 @@ function SearchWord({input}: {input: string;}){
     }
   }
   
-  async function fetchOneWord({input}: {input: string;}) {
-    const response = await services.getOneWord(input);
+  async function fetchOneWord({input}: {input: string}) {
+    const response = await services.getOneWord(input.toLowerCase());
     console.log(response)
     if (response === null) {
       setWordData({})
@@ -44,25 +44,14 @@ function SearchWord({input}: {input: string;}){
 }
 
 function AllWords({result}: {result: {}}) {
-  let htmlString = "";
-  
-  htmlString+= Header()
-  for(let i=0; i<3;i++){
-    htmlString += OneWordInDictionary({result})
-  }
-  
-  return (<div>{htmlString}</div>)
+  return (<div>running dictionary</div>)
 }
 
 function Header(){
   return(
     <table>
       <tr>
-        <th className="table-header" aria-label="Searched Word Header"> Word: </th>
-        <th className="table-header" aria-label="Word Meaning Header"> Meaning: </th>
-        <th className="table-header" aria-label="Disability Context Header"> Context: </th>
-        <th className="table-header" aria-label="Word Stigma Header"> Word Stigma: </th>
-        <th className="table-header" aria-label="Word Substitutions Header"> Word Substitutions: </th>
+        <th className="table-header" aria-label="Words in Dictionary"> Word: </th>
       </tr>
     </table>
   )
@@ -88,7 +77,7 @@ function OneWordInDictionary({result}: {result: {}}) {
 function OneWord({result}: {result: {}}, {input}: {input: string}) {
   //result will be a nested dictionary (its a word, which maps to a dictionary of the fields)
   //change result fields from strings to actual field
-  if(result == null || result == "{}"){
+  if(result == null || result == '{}' || result == undefined){
     return WordNotFound({input})
   }
   else {
@@ -102,11 +91,11 @@ function OneWord({result}: {result: {}}, {input}: {input: string}) {
           <th className="table-header" aria-label="Word Substitutions Header"> Word Substitutions: </th>
         </tr>
         <tr>
-          <td className="table-column" aria-label="Searched Word">{JSON.stringify(result)}</td>
-          <td className="table-column" aria-label="Word Meaning">{"result.meaning"}</td>
-          <td className="table-column" aria-label="Disability Context">{"result.context"}</td>
-          <td className="table-column" aria-label="Word Stigma">{"result.stigma"}</td>
-          <td className="table-column" aria-label="Word Substitutions">{"result.substitutions"}</td>
+          <td className="table-column" aria-label="Searched Word">{result.word}</td>
+          <td className="table-column" aria-label="Word Meaning">{result.meaning}</td>
+          <td className="table-column" aria-label="Disability Context">{result.context}</td>
+          <td className="table-column" aria-label="Word Stigma">{result.stigma}</td>
+          <td className="table-column" aria-label="Word Substitutions">{result.substitutions}</td>
         </tr>
       </table>
     );
@@ -124,10 +113,12 @@ function WordNotFound({input}: {input: string;}){
 }
 
 function WordLog({input}: {input: string;}) {
+  const lowerInput: string = input.toLowerCase()
   const result: {} = SearchWord({input});
   switch(input) {
     case "":
       return WordNotFound({input});
+      break;
     case "dictionary":
       return AllWords({result});
       break;
@@ -161,6 +152,14 @@ function ControlledInput({ value, setValue, ariaLabel }: ControlledInputProps) {
 /* props for handling the user input */
 interface CommandLineProps {
   addInput: (input: string) => any;
+}
+
+type WordResult = {
+  word: string,
+  meaning: string,
+  context: string,
+  stigma: string,
+  substitutions: string
 }
 
 function SearchBar({addInput}: CommandLineProps) {
