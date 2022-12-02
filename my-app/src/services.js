@@ -11,7 +11,6 @@ async function getAllWords() {
   try {
     const response = await axios.get(`${API_ROOT}/allWords`);
     const dictionary = response.data
-    console.log(dictionary)
     return dictionary.map((word) => ({
             word: word.word,
             meaning: word.meaning,
@@ -23,20 +22,6 @@ async function getAllWords() {
     console.log("error", error);
     return null;
   }
-  
-  // axios.get(`${API_ROOT}/allWords`)
-  //   .then((dictionary) => {
-  //     return dictionary.data.map((word) => ({
-  //       word: word.word,
-  //       meaning: word.meaning,
-  //       context: word.context,
-  //       stigma: word.stigma,
-  //       substitutions: word.substitutions,
-  //     }))
-  //   }).catch((error) => {
-  //     console.log("getAllWords ERROR: ", error);
-  //     return error
-  //   })
 }
 
 async function getOneWord(word) {
