@@ -50,7 +50,11 @@ table {
   table{
     width: 100%;
     table-layout: fixed;
+    font-family: "Tahoma";
+    color: #3d3824;
   }
+  
+
 
   input:placeholder-shown{
     font-style: italic;
